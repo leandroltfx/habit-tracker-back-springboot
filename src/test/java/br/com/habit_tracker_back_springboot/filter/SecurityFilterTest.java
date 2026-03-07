@@ -1,4 +1,4 @@
-package br.com.habit_tracker_back_springboot.security.filter;
+package br.com.habit_tracker_back_springboot.filter;
 
 import br.com.habit_tracker_back_springboot.service.JWTService;
 import jakarta.servlet.FilterChain;
