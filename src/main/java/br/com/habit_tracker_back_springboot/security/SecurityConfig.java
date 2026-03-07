@@ -1,6 +1,6 @@
 package br.com.habit_tracker_back_springboot.security;
 
-import br.com.habit_tracker_back_springboot.security.filter.SecurityFilter;
+import br.com.habit_tracker_back_springboot.filter.SecurityFilter;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
