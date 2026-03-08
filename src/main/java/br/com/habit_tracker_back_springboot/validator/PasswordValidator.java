@@ -18,9 +18,9 @@ public class PasswordValidator implements ConstraintValidator<ValidPassword, Str
             return false;
         }
 
-        if (value.length() < 8 || value.length() > 254) {
+        if (value.length() < 8 || value.length() > 60) {
             constraintValidatorContext
-                    .buildConstraintViolationWithTemplate("A senha deve ter entre 8 e 254 caracteres.")
+                    .buildConstraintViolationWithTemplate("A senha deve ter entre 8 e 60 caracteres.")
                     .addConstraintViolation();
             return false;
         }
