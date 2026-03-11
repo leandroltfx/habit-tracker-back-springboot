@@ -64,7 +64,7 @@ class SecurityFilterTest {
 
         securityFilter.doFilterInternal(request, response, filterChain);
 
-        verify(request).setAttribute("userId", userId);
+        verify(request).setAttribute("user_id", userId);
         verify(filterChain).doFilter(request, response);
 
         var authentication = SecurityContextHolder.getContext().getAuthentication();
