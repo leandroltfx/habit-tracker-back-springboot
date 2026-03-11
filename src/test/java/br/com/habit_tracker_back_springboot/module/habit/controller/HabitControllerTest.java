@@ -2,18 +2,22 @@ package br.com.habit_tracker_back_springboot.module.habit.controller;
 
 import br.com.habit_tracker_back_springboot.module.habit.dto.CreateHabitRequestDTO;
 import br.com.habit_tracker_back_springboot.module.habit.dto.CreateHabitResponseDTO;
+import br.com.habit_tracker_back_springboot.module.habit.dto.HabitDTO;
 import br.com.habit_tracker_back_springboot.module.habit.useCase.CreateHabitUseCase;
 import br.com.habit_tracker_back_springboot.module.habit.useCase.DeleteHabitUseCase;
+import br.com.habit_tracker_back_springboot.module.habit.useCase.ListHabitsUseCase;
 import br.com.habit_tracker_back_springboot.service.JWTService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -21,9 +25,9 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(HabitController.class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -43,6 +47,9 @@ class HabitControllerTest {
 
     @MockBean
     private DeleteHabitUseCase deleteHabitUseCase;
+
+    @MockBean
+    private ListHabitsUseCase listHabitsUseCase;
 
     @Test
     void shouldCreateHabitSuccessfully() throws Exception {
@@ -98,5 +105,29 @@ class HabitControllerTest {
                 .andExpect(jsonPath("$.message")
                         .value("Hábito excluído com sucesso!"))
                 .andExpect(jsonPath("$.data").doesNotExist());
+    }
+
+    @Test
+    void shouldListHabitsSuccessfully() throws Exception {
+
+        UUID userId = UUID.randomUUID();
+
+        List<HabitDTO> habits = List.of(
+                HabitDTO.builder()
+                        .id(UUID.randomUUID())
+                        .name("Beber água")
+                        .description("Beber 2L por dia")
+                        .active(true)
+                        .build()
+        );
+
+        when(listHabitsUseCase.execute(userId))
+                .thenReturn(habits);
+
+        mockMvc.perform(get("/habits")
+                        .requestAttr("user_id", userId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").doesNotExist())
+                .andExpect(jsonPath("$.data").isArray());
     }
 }

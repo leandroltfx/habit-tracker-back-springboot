@@ -4,6 +4,7 @@ import br.com.habit_tracker_back_springboot.dto.ApiResponseDTO;
 import br.com.habit_tracker_back_springboot.module.habit.dto.CreateHabitRequestDTO;
 import br.com.habit_tracker_back_springboot.module.habit.useCase.CreateHabitUseCase;
 import br.com.habit_tracker_back_springboot.module.habit.useCase.DeleteHabitUseCase;
+import br.com.habit_tracker_back_springboot.module.habit.useCase.ListHabitsUseCase;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -20,6 +21,7 @@ public class HabitController {
 
     private final CreateHabitUseCase createHabitUseCase;
     private final DeleteHabitUseCase deleteHabitUseCase;
+    private final ListHabitsUseCase listHabitsUseCase;
 
     @PostMapping
     public ResponseEntity<ApiResponseDTO> createHabit(
@@ -57,6 +59,22 @@ public class HabitController {
                                 .builder()
                                 .message("Hábito excluído com sucesso!")
                                 .data(null)
+                                .build()
+                );
+    }
+
+    @GetMapping
+    public ResponseEntity<ApiResponseDTO> listHabits(
+            HttpServletRequest httpServletRequest
+    ) {
+        var listHabitsDTO = this.listHabitsUseCase.execute(this.extractUserIdFromRequest(httpServletRequest));
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(
+                        ApiResponseDTO
+                                .builder()
+                                .message(null)
+                                .data(listHabitsDTO)
                                 .build()
                 );
     }
