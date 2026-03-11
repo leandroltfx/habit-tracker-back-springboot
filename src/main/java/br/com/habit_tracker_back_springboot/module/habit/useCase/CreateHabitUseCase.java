@@ -15,7 +15,7 @@ public class CreateHabitUseCase {
 
     private final HabitRepository habitRepository;
 
-    public CreateHabitResponseDTO createHabit(
+    public CreateHabitResponseDTO execute(
             UUID userId,
             CreateHabitRequestDTO createHabitRequestDTO
     ) {

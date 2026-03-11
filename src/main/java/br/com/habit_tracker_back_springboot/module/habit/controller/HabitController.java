@@ -26,7 +26,7 @@ public class HabitController {
             HttpServletRequest httpServletRequest,
             @Valid @RequestBody CreateHabitRequestDTO createHabitRequestDTO
     ) {
-        var habitCreated = this.createHabitUseCase.createHabit(
+        var habitCreated = this.createHabitUseCase.execute(
                 this.extractUserIdFromRequest(httpServletRequest),
                 createHabitRequestDTO
         );

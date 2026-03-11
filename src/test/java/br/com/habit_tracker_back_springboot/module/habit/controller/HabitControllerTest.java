@@ -63,7 +63,7 @@ class HabitControllerTest {
                 .active(true)
                 .build();
 
-        when(createHabitUseCase.createHabit(eq(userId), any()))
+        when(createHabitUseCase.execute(eq(userId), any()))
                 .thenReturn(response);
 
         mockMvc.perform(post("/habits")

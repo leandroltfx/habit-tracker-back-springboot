@@ -46,7 +46,7 @@ class CreateHabitUseCaseTest {
         when(habitRepository.save(any(HabitEntity.class))).thenReturn(savedHabit);
 
         CreateHabitResponseDTO response =
-                createHabitUseCase.createHabit(userId, request);
+                createHabitUseCase.execute(userId, request);
 
         assertNotNull(response);
         assertEquals(habitId, response.getId());
