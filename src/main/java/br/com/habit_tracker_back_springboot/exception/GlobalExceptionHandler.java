@@ -3,8 +3,10 @@ package br.com.habit_tracker_back_springboot.exception;
 import br.com.habit_tracker_back_springboot.dto.ApiResponseDTO;
 import br.com.habit_tracker_back_springboot.dto.FieldErrorDTO;
 import jakarta.persistence.EntityExistsException;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -69,6 +71,30 @@ public class GlobalExceptionHandler {
                 .data(null)
                 .build();
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResponseDTO);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ApiResponseDTO> handleAccessDeniedException(
+            AccessDeniedException accessDeniedException
+    ) {
+        ApiResponseDTO apiResponseDTO = ApiResponseDTO
+                .builder()
+                .message(accessDeniedException.getMessage())
+                .data(null)
+                .build();
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(apiResponseDTO);
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ApiResponseDTO> handleEntityNotFoundException(
+            EntityNotFoundException entityNotFoundException
+    ) {
+        ApiResponseDTO apiResponseDTO = ApiResponseDTO
+                .builder()
+                .message(entityNotFoundException.getMessage())
+                .data(null)
+                .build();
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(apiResponseDTO);
     }
 
 }

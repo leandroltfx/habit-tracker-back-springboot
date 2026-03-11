@@ -3,6 +3,7 @@ package br.com.habit_tracker_back_springboot.module.habit.controller;
 import br.com.habit_tracker_back_springboot.module.habit.dto.CreateHabitRequestDTO;
 import br.com.habit_tracker_back_springboot.module.habit.dto.CreateHabitResponseDTO;
 import br.com.habit_tracker_back_springboot.module.habit.useCase.CreateHabitUseCase;
+import br.com.habit_tracker_back_springboot.module.habit.useCase.DeleteHabitUseCase;
 import br.com.habit_tracker_back_springboot.service.JWTService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -17,7 +18,9 @@ import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -37,6 +40,9 @@ class HabitControllerTest {
 
     @MockBean
     private JWTService jwtService;
+
+    @MockBean
+    private DeleteHabitUseCase deleteHabitUseCase;
 
     @Test
     void shouldCreateHabitSuccessfully() throws Exception {
@@ -75,5 +81,22 @@ class HabitControllerTest {
                         .value("Beber 2L por dia"))
                 .andExpect(jsonPath("$.data.active")
                         .value(true));
+    }
+
+    @Test
+    void shouldDeleteHabitSuccessfully() throws Exception {
+
+        UUID userId = UUID.randomUUID();
+        UUID habitId = UUID.randomUUID();
+
+        doNothing().when(deleteHabitUseCase)
+                .execute(userId, habitId);
+
+        mockMvc.perform(delete("/habits/{habit_id}", habitId)
+                        .requestAttr("user_id", userId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message")
+                        .value("Hábito excluído com sucesso!"))
+                .andExpect(jsonPath("$.data").doesNotExist());
     }
 }
