@@ -5,6 +5,7 @@ import br.com.habit_tracker_back_springboot.module.habit.dto.CreateHabitRequestD
 import br.com.habit_tracker_back_springboot.module.habit.useCase.CreateHabitUseCase;
 import br.com.habit_tracker_back_springboot.module.habit.useCase.DeleteHabitUseCase;
 import br.com.habit_tracker_back_springboot.module.habit.useCase.ListHabitsUseCase;
+import br.com.habit_tracker_back_springboot.module.habit.useCase.UpdateHabitUseCase;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -22,6 +23,7 @@ public class HabitController {
     private final CreateHabitUseCase createHabitUseCase;
     private final DeleteHabitUseCase deleteHabitUseCase;
     private final ListHabitsUseCase listHabitsUseCase;
+    private final UpdateHabitUseCase updateHabitUseCase;
 
     @PostMapping
     public ResponseEntity<ApiResponseDTO> createHabit(
@@ -75,6 +77,28 @@ public class HabitController {
                                 .builder()
                                 .message(null)
                                 .data(listHabitsDTO)
+                                .build()
+                );
+    }
+
+    @PutMapping("/{habit_id}")
+    public ResponseEntity<ApiResponseDTO> updateHabit(
+            HttpServletRequest httpServletRequest,
+            @PathVariable("habit_id") String habitId,
+            @Valid @RequestBody CreateHabitRequestDTO createHabitRequestDTO
+    ) {
+        var habitUpdated = this.updateHabitUseCase.execute(
+                this.extractUserIdFromRequest(httpServletRequest),
+                UUID.fromString(habitId),
+                createHabitRequestDTO
+        );
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(
+                        ApiResponseDTO
+                                .builder()
+                                .message("Hábito alterado com sucesso!")
+                                .data(habitUpdated)
                                 .build()
                 );
     }
